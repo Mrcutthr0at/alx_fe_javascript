@@ -84,28 +84,14 @@ function addQuote() {
   alert("Quote added successfully!");
 }
 
-function createExportButton() {
-  const exportBtn = document.createElement("button");
-  exportBtn.textContent = "Export Quotes as JSON";
-  exportBtn.onclick = () => {
-    const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "quotes.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  document.body.appendChild(exportBtn);
-}
-
-function createImportInput() {
-  const importInput = document.createElement("input");
-  importInput.type = "file";
-  importInput.id = "importFile";
-  importInput.accept = ".json";
-  importInput.onchange = importFromJsonFile;
-  document.body.appendChild(importInput);
+function exportToJsonFile() {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function importFromJsonFile(event) {
@@ -131,7 +117,6 @@ function restoreLastQuote() {
 loadQuotes();
 populateCategories();
 createAddQuoteForm();
-createExportButton();
-createImportInput();
 restoreLastQuote();
 newQuoteBtn.addEventListener("click", showRandomQuote);
+document.getElementById("exportQuotes").addEventListener("click", exportToJsonFile);
