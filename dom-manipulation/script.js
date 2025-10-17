@@ -18,7 +18,7 @@ function populateCategories() {
   });
 }
 
-function displayRandomQuote() {
+function showRandomQuote() {
   const selectedCategory = categorySelect.value;
   const filteredQuotes = selectedCategory
     ? quotes.filter(q => q.category === selectedCategory)
@@ -78,6 +78,6 @@ function addQuote() {
   alert("Quote added successfully!");
 }
 
-newQuoteBtn.addEventListener("click", displayRandomQuote);
+newQuoteBtn.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
 populateCategories();
