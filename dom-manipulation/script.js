@@ -130,37 +130,34 @@ function restoreLastQuote() {
   }
 }
 
-function fetchQuotesFromServer() {
-  return fetch(SERVER_URL)
-    .then(res => res.json())
-    .then(data => {
-      return data.map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
-    });
+async function fetchQuotesFromServer() {
+  const response = await fetch(SERVER_URL);
+  const data = await response.json();
+  return data.map(post => ({
+    text: post.title,
+    category: "Server"
+  }));
 }
 
-function postQuoteToServer(quote) {
-  return fetch(SERVER_URL, {
+async function postQuoteToServer(quote) {
+  await fetch(SERVER_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title: quote.text, body: quote.category })
   });
 }
 
-function syncQuotes() {
-  fetchQuotesFromServer().then(serverQuotes => {
-    const localTexts = quotes.map(q => q.text);
-    const newQuotes = serverQuotes.filter(q => !localTexts.includes(q.text));
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localTexts = quotes.map(q => q.text);
+  const newQuotes = serverQuotes.filter(q => !localTexts.includes(q.text));
 
-    if (newQuotes.length > 0) {
-      quotes.push(...newQuotes);
-      saveQuotes();
-      populateCategories();
-      notifyConflict(newQuotes.length);
-    }
-  });
+  if (newQuotes.length > 0) {
+    quotes.push(...newQuotes);
+    saveQuotes();
+    populateCategories();
+    notifyConflict(newQuotes.length);
+  }
 }
 
 function notifyConflict(count) {
