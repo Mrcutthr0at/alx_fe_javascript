@@ -89,9 +89,11 @@ function addQuote() {
     return;
   }
 
-  quotes.push({ text, category });
+  const newQuote = { text, category };
+  quotes.push(newQuote);
   saveQuotes();
   populateCategories();
+  postQuoteToServer(newQuote);
 
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
@@ -128,25 +130,37 @@ function restoreLastQuote() {
   }
 }
 
-function syncWithServer() {
-  fetch(SERVER_URL)
+function fetchQuotesFromServer() {
+  return fetch(SERVER_URL)
     .then(res => res.json())
-    .then(serverData => {
-      const serverQuotes = serverData.map(post => ({
+    .then(data => {
+      return data.map(post => ({
         text: post.title,
         category: "Server"
       }));
-
-      const localTexts = quotes.map(q => q.text);
-      const newQuotes = serverQuotes.filter(q => !localTexts.includes(q.text));
-
-      if (newQuotes.length > 0) {
-        quotes.push(...newQuotes);
-        saveQuotes();
-        populateCategories();
-        notifyConflict(newQuotes.length);
-      }
     });
+}
+
+function postQuoteToServer(quote) {
+  return fetch(SERVER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: quote.text, body: quote.category })
+  });
+}
+
+function syncQuotes() {
+  fetchQuotesFromServer().then(serverQuotes => {
+    const localTexts = quotes.map(q => q.text);
+    const newQuotes = serverQuotes.filter(q => !localTexts.includes(q.text));
+
+    if (newQuotes.length > 0) {
+      quotes.push(...newQuotes);
+      saveQuotes();
+      populateCategories();
+      notifyConflict(newQuotes.length);
+    }
+  });
 }
 
 function notifyConflict(count) {
@@ -160,4 +174,4 @@ createAddQuoteForm();
 restoreLastQuote();
 newQuoteBtn.addEventListener("click", showRandomQuote);
 document.getElementById("exportQuotes").addEventListener("click", exportToJsonFile);
-setInterval(syncWithServer, 30000);
+setInterval(syncQuotes, 30000);
