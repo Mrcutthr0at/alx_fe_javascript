@@ -161,7 +161,7 @@ async function syncQuotes() {
 }
 
 function notifyConflict(count) {
-  notification.textContent = `${count} new quotes synced from server.`;
+  notification.textContent = "Quotes synced with server!";
   notification.style.display = "block";
 }
 
