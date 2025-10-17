@@ -18,19 +18,19 @@ function populateCategories() {
   });
 }
 
-function showRandomQuote() {
+function displayRandomQuote() {
   const selectedCategory = categorySelect.value;
   const filteredQuotes = selectedCategory
     ? quotes.filter(q => q.category === selectedCategory)
     : quotes;
 
   if (filteredQuotes.length === 0) {
-    quoteDisplay.textContent = "No quotes available for this category.";
+    quoteDisplay.innerHTML = "<em>No quotes available for this category.</em>";
     return;
   }
 
   const randomQuote = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
-  quoteDisplay.textContent = `"${randomQuote.text}" — ${randomQuote.category}`;
+  quoteDisplay.innerHTML = `"${randomQuote.text}" — <strong>${randomQuote.category}</strong>`;
 }
 
 function createAddQuoteForm() {
@@ -78,6 +78,6 @@ function addQuote() {
   alert("Quote added successfully!");
 }
 
-newQuoteBtn.addEventListener("click", showRandomQuote);
+newQuoteBtn.addEventListener("click", displayRandomQuote);
 createAddQuoteForm();
 populateCategories();
